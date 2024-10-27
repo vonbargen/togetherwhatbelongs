@@ -131,6 +131,308 @@ bool parse_module(void) {
     return true;
 }
 
+static bool parse_expression(void) {
+    // Implement expression parsing
+    return true;
+}
+
+static bool parse_array_type(void) {
+    // Implement expression parsing
+    return true;
+}
+
+static bool parse_record_type(void) {
+    // Implement expression parsing
+    return true;
+}
+
+static bool parse_pointer_type(void) {
+    // Implement expression parsing
+    return true;
+}
+
+static bool parse_procedure_type(void) {
+    // Implement expression parsing
+    return true;
+}
+
+static bool parse_const_expression(void) {
+    // Implement constant expression parsing
+    return parse_expression();
+}
+
+static bool parse_const_declaration(void) {
+    if (!parse_ident()) return false;
+    consume(T_EQU);
+    if (!parse_const_expression()) return false;
+    return true;
+}
+
+static bool parse_type(void) {
+    // Implement type parsing
+    return parse_ident() || parse_array_type() || parse_record_type() || parse_pointer_type() || parse_procedure_type();
+}
+
+static bool parse_type_declaration(void) {
+    if (!parse_ident()) return false;
+    consume(T_EQU);
+    if (!parse_type()) return false;
+    return true;
+}
+
+static bool parse_ident_list(void) {
+    if (!parse_ident()) return false;
+    while (current_token.type == T_COMMA) {
+        consume(T_COMMA);
+        if (!parse_ident()) return false;
+    }
+    return true;
+}
+
+static bool parse_variable_declaration(void) {
+    if (!parse_ident_list()) return false;
+    consume(T_COLON);
+    if (!parse_type()) return false;
+    return true;
+}
+
+static bool parse_formal_parameters(void) {
+    consume(T_LPAREN);
+    if (current_token.type != T_RPAREN) {
+        do {
+            if (current_token.type == T_VAR) {
+                consume(T_VAR);
+            }
+            if (!parse_ident_list()) return false;
+            consume(T_COLON);
+            if (!parse_type()) return false;
+        } while (current_token.type == T_SEMI);
+    }
+    consume(T_RPAREN);
+    if (current_token.type == T_COLON) {
+        consume(T_COLON);
+        if (!parse_ident()) return false;
+    }
+    return true;
+}
+
+static bool parse_procedure_heading(void) {
+    consume(T_PROCEDURE);
+    if (!parse_ident()) return false;
+    if (current_token.type == T_LPAREN) {
+        if (!parse_formal_parameters()) return false;
+    }
+    return true;
+}
+
+static bool parse_procedure_body(void) {
+    if (!parse_declaration_sequence()) return false;
+    if (current_token.type == T_BEGIN) {
+        consume(T_BEGIN);
+        if (!parse_statement_sequence()) return false;
+    }
+    if (current_token.type == T_RETURN) {
+        consume(T_RETURN);
+        if (!parse_expression()) return false;
+    }
+    consume(T_END);
+    return true;
+}
+
+static bool parse_procedure_declaration(void) {
+    if (!parse_procedure_heading()) return false;
+    consume(T_SEMI);
+    if (!parse_procedure_body()) return false;
+    if (!parse_ident()) return false;
+    return true;
+}
+
+/*
+static bool parse_declaration_sequence(void) {
+    while (true) {
+        switch (current_token.type) {
+            case T_CONST:
+                consume(T_CONST);
+                while (current_token.type == T_ID) {
+                    if (!parse_const_declaration()) return false;
+                    consume(T_SEMI);
+                }
+                break;
+            case T_TYPE:
+                consume(T_TYPE);
+                while (current_token.type == T_ID) {
+                    if (!parse_type_declaration()) return false;
+                    consume(T_SEMI);
+                }
+                break;
+            case T_VAR:
+                consume(T_VAR);
+                while (current_token.type == T_ID) {
+                    if (!parse_variable_declaration()) return false;
+                    consume(T_SEMI);
+                }
+                break;
+            case T_PROCEDURE:
+                if (!parse_procedure_declaration()) return false;
+                consume(T_SEMI);
+                break;
+            default:
+                return true;
+        }
+    }
+}
+*/
+
+static bool parse_assignment(void) {
+    if (!parse_ident()) return false;
+    consume(T_ASSIGN);
+    if (!parse_expression()) return false;
+    return true;
+}
+
+static bool parse_procedure_call(void) {
+    if (!parse_ident()) return false;
+    if (current_token.type == T_LPAREN) {
+        consume(T_LPAREN);
+        if (current_token.type != T_RPAREN) {
+            do {
+                if (!parse_expression()) return false;
+            } while (current_token.type == T_COMMA);
+        }
+        consume(T_RPAREN);
+    }
+    return true;
+}
+
+static bool parse_if_statement(void) {
+    consume(T_IF);
+    if (!parse_expression()) return false;
+    consume(T_THEN);
+    if (!parse_statement_sequence()) return false;
+    while (current_token.type == T_ELSIF) {
+        consume(T_ELSIF);
+        if (!parse_expression()) return false;
+        consume(T_THEN);
+        if (!parse_statement_sequence()) return false;
+    }
+    if (current_token.type == T_ELSE) {
+        consume(T_ELSE);
+        if (!parse_statement_sequence()) return false;
+    }
+    consume(T_END);
+    return true;
+}
+
+static bool parse_case_statement(void) {
+    consume(T_CASE);
+    if (!parse_expression()) return false;
+    consume(T_OF);
+    do {
+        // Parse case
+        if (!parse_expression()) return false;
+        consume(T_COLON);
+        if (!parse_statement_sequence()) return false;
+    } while (current_token.type == T_BAR);
+    consume(T_END);
+    return true;
+}
+
+static bool parse_while_statement(void) {
+    consume(T_WHILE);
+    if (!parse_expression()) return false;
+    consume(T_DO);
+    if (!parse_statement_sequence()) return false;
+    while (current_token.type == T_ELSIF) {
+        consume(T_ELSIF);
+        if (!parse_expression()) return false;
+        consume(T_DO);
+        if (!parse_statement_sequence()) return false;
+    }
+    consume(T_END);
+    return true;
+}
+
+static bool parse_repeat_statement(void) {
+    consume(T_REPEAT);
+    if (!parse_statement_sequence()) return false;
+    consume(T_UNTIL);
+    if (!parse_expression()) return false;
+    return true;
+}
+
+static bool parse_for_statement(void) {
+    consume(T_FOR);
+    if (!parse_ident()) return false;
+    consume(T_ASSIGN);
+    if (!parse_expression()) return false;
+    consume(T_TO);
+    if (!parse_expression()) return false;
+    if (current_token.type == T_BY) {
+        consume(T_BY);
+        if (!parse_const_expression()) return false;
+    }
+    consume(T_DO);
+    if (!parse_statement_sequence()) return false;
+    consume(T_END);
+    return true;
+}
+
+static bool parse_statement(void) {
+    switch (current_token.type) {
+        case T_ID:
+            if (scanner_peek_token().type == T_ASSIGN) {
+                return parse_assignment();
+            } else {
+                return parse_procedure_call();
+            }
+        case T_IF:
+            return parse_if_statement();
+        case T_CASE:
+            return parse_case_statement();
+        case T_WHILE:
+            return parse_while_statement();
+        case T_REPEAT:
+            return parse_repeat_statement();
+        case T_FOR:
+            return parse_for_statement();
+        default:
+            return true; // Empty statement
+    }
+}
+
+/*
+static bool parse_statement_sequence(void) {
+    do {
+        if (!parse_statement()) return false;
+    } while (current_token.type == T_SEMI);
+    return true;
+}
+
+bool parse_module(void) {
+    consume(T_MODULE);
+    if (!parse_ident()) return false;
+    consume(T_SEMI);
+
+    if (current_token.type == T_IMPORT) {
+        if (!parse_import_list()) return false;
+    }
+
+    if (!parse_declaration_sequence()) return false;
+
+    if (current_token.type == T_BEGIN) {
+        consume(T_BEGIN);
+        if (!parse_statement_sequence()) return false;
+    }
+
+    consume(T_END);
+    if (!parse_ident()) return false;
+    consume(T_DOT);
+
+    return true;
+}
+ */
+
+
 
 #include <unistd.h>
 
