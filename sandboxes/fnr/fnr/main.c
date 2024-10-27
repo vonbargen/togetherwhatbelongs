@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
         printf("Token: %d, Lexeme: %s, Line: %d, Column: %d\n", 
                token.type, token.lexeme, token.line, token.column);
         free(token.lexeme);
-    } while (token.type != TOKEN_EOF);
+    } while (token.type != T_EOF);
 
     scanner_cleanup();
     return EXIT_SUCCESS;
