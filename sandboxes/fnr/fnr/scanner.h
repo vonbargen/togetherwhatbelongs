@@ -3,11 +3,9 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
-#include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 
-// Token types
 typedef enum {
     TOKEN_EOF,
     TOKEN_IDENTIFIER,
@@ -49,16 +47,9 @@ typedef struct {
     int column;
 } Token;
 
-// Initialize the scanner with a file
 bool scanner_init(const char *filename);
-
-// Get the next token
-Token scanner_next_token();
-
-// Peek at the next token without consuming it
-Token scanner_peek_token();
-
-// Clean up the scanner
-void scanner_cleanup();
+Token scanner_next_token(void);
+Token scanner_peek_token(void);
+void scanner_cleanup(void);
 
 #endif // SCANNER_H
