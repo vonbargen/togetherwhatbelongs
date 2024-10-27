@@ -1,8 +1,10 @@
+#include "parser.h"
 #include "scanner.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 
+/*
 int main(int argc, char *argv[]) {
 
     // Print the number of arguments
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
     Token token;
     do {
         token = scanner_next_token();
-        printf("Token: %d, Lexeme: %s, Line: %d, Column: %d\n", 
+        printf("Token: %d, Lexeme: %s, Line: %d, Column: %d\n",
                token.type, token.lexeme, token.line, token.column);
         free(token.lexeme);
     } while (token.type != T_EOF);
@@ -37,3 +39,6 @@ int main(int argc, char *argv[]) {
     scanner_cleanup();
     return EXIT_SUCCESS;
 }
+*/
+
+

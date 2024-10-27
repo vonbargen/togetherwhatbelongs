@@ -1,0 +1,57 @@
+letter = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z".
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9".
+ident = letter {letter | digit}.
+
+number = integer | real.
+integer = digit {digit} | digit {hexDigit} "H".
+real = digit {digit} "." {digit} [ScaleFactor].
+ScaleFactor = "E" ["+" | "-"] digit {digit}.
+hexDigit = digit | "A" | "B" | "C" | "D" | "E" | "F".
+string = """ {character} """ | digit {hexDigit} "X".
+
+module = MODULE ident ";" [ImportList] DeclarationSequence
+         [BEGIN StatementSequence] END ident ".".
+ImportList = IMPORT import {"," import} ";".
+import = ident [":=" ident].
+
+DeclarationSequence = [CONST {ConstDeclaration ";"}]
+                      [TYPE {TypeDeclaration ";"}]
+                      [VAR {VariableDeclaration ";"}]
+                      {ProcedureDeclaration ";"}.
+ConstDeclaration = identdef "=" ConstExpression.
+TypeDeclaration = identdef "=" StrucType.
+VariableDeclaration = IdentList ":" type.
+
+StrucType = ArrayType | RecordType | PointerType | ProcedureType.
+ArrayType = ARRAY length {"," length} OF type.
+RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
+PointerType = POINTER TO type.
+ProcedureType = PROCEDURE [FormalParameters].
+
+ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+ProcedureHeading = PROCEDURE identdef [FormalParameters].
+ProcedureBody = DeclarationSequence [BEGIN StatementSequence]
+                [RETURN expression] END.
+FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
+FPSection = [VAR] ident {"," ident} ":" FormalType.
+
+expression = SimpleExpression [relation SimpleExpression].
+SimpleExpression = ["+" | "-"] term {AddOperator term}.
+term = factor {MulOperator factor}.
+factor = number | string | NIL | TRUE | FALSE | set |
+         designator [ActualParameters] | "(" expression ")" | "~" factor.
+
+StatementSequence = statement {";" statement}.
+statement = [assignment | ProcedureCall | IfStatement | CaseStatement |
+             WhileStatement | RepeatStatement | ForStatement].
+assignment = designator ":=" expression.
+IfStatement = IF expression THEN StatementSequence
+              {ELSIF expression THEN StatementSequence}
+              [ELSE StatementSequence] END.
+CaseStatement = CASE expression OF case {"|" case} END.
+WhileStatement = WHILE expression DO StatementSequence
+                 {ELSIF expression DO StatementSequence} END.
+RepeatStatement = REPEAT StatementSequence UNTIL expression.
+ForStatement = FOR ident ":=" expression TO expression
+               [BY ConstExpression] DO StatementSequence END.
+

@@ -1,0 +1,55 @@
+MODULE SampleModule;
+
+IMPORT System, Math := MathLib;
+
+CONST
+  Pi = 3.14159;
+  MaxValue = 1000;
+  HexConst = 0ABCDH;
+
+TYPE
+  Color = (Red, Green, Blue);
+
+VAR
+  count: INTEGER;
+  temperature: REAL;
+  name: ARRAY 50 OF CHAR;
+  isReady: BOOLEAN;
+
+PROCEDURE CalculateArea(radius: REAL): REAL;
+VAR
+  area: REAL;
+BEGIN
+  area := Pi * radius * radius;
+  RETURN area
+END CalculateArea;
+
+BEGIN
+  count := 42;
+  temperature := 98.6E-1;
+  name := "John Doe";
+  isReady := TRUE;
+
+  System.WriteInt(count, 0);
+  System.WriteReal(temperature, 10, 2);
+  System.WriteString(name);
+
+  IF isReady THEN
+    System.WriteReal(CalculateArea(5.0), 10, 2)
+  END;
+
+  CASE count OF
+    0..9: System.WriteString("Single digit")
+    | 10..99: System.WriteString("Double digit")
+    ELSE System.WriteString("Large number")
+  END;
+
+  WHILE count > 0 DO
+    System.WriteInt(count, 5);
+    count := count - 1
+  END;
+
+  FOR count := 1 TO 10 BY 2 DO
+    System.WriteInt(count * count, 5)
+  END
+END SampleModule.
