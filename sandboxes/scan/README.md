@@ -3,6 +3,7 @@
 cmake -G Xcode -B build
 
 ## Oberon
+- https://github.com/oberon-lang/specification/blob/master/The_Programming_Language_Oberon+.adoc
 - EBNF
   - https://oberon07.com/o7EBNF.xhtml
 - Test
