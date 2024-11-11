@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "ssh-1.h"
+#include "sha-1.h"
 
 int main(void) {
 

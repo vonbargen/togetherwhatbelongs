@@ -1,4 +1,4 @@
-#include "ssh-1.h"
+#include "sha-1.h"
 #include <openssl/evp.h>
 #include <stdio.h>
 
