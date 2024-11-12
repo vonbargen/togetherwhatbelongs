@@ -1,0 +1,25 @@
+# ninja log v6
+1	26	1731336786445107566	CMakeFiles/clean.additional	c6e01bee94ed7723
+26	47	1731336786470662277	clean	fdd033e889da94b0
+2	83	1731336789664465600	2gtr_qt_autogen/timestamp	d3a35a65990ab66b
+2	83	1731336789664465600	2gtr_qt_autogen/mocs_compilation.cpp	d3a35a65990ab66b
+2	83	1731336789664465600	/Users/thorsten/Documents/projects/com/github/vonbargen/togetherwhatbelongs/sandboxes/2gtr-qt/cmake-build-release/2gtr_qt_autogen/timestamp	d3a35a65990ab66b
+2	83	1731336789664465600	/Users/thorsten/Documents/projects/com/github/vonbargen/togetherwhatbelongs/sandboxes/2gtr-qt/cmake-build-release/2gtr_qt_autogen/mocs_compilation.cpp	d3a35a65990ab66b
+84	137	1731336789677202060	CMakeFiles/2gtr_qt.dir/2gtr_qt_autogen/mocs_compilation.cpp.o	c8a22571bedfeca8
+84	1271	1731336789677663102	CMakeFiles/2gtr_qt.dir/main.cpp.o	a92dca3065f35c12
+85	1275	1731336789678133227	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Widgets/Qt5Widgets_QMacStylePlugin_Import.cpp.o	9f78adf94f2e5428
+85	1277	1731336789678354769	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5PrintSupport/Qt5PrintSupport_QCocoaPrinterSupportPlugin_Import.cpp.o	c77e00077346b72c
+86	1279	1731336789678810518	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QICNSPlugin_Import.cpp.o	6fa1000a6bbc3bca
+85	1281	1731336789678577560	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QGifPlugin_Import.cpp.o	a683ee3b70e2f22b
+85	1283	1731336789677898935	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QCocoaIntegrationPlugin_Import.cpp.o	cc0c519c67d8a527
+137	1294	1731336789730101108	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QJpegPlugin_Import.cpp.o	81f6bd68baefe654
+86	1297	1731336789679082394	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QICOPlugin_Import.cpp.o	50ee5c822cb6a30b
+1281	2301	1731336790874785030	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QTgaPlugin_Import.cpp.o	de8f8a601ac3fad9
+1273	2343	1731336790866273904	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QMacHeifPlugin_Import.cpp.o	ff9f9d89ce868377
+1277	2353	1731336790870525655	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QSvgIconPlugin_Import.cpp.o	c1e5eff43c6b2c57
+1297	2361	1731336790890015240	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QWebpPlugin_Import.cpp.o	1f5d3b06e7f5edf5
+1275	2365	1731336790868292779	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QMacJp2Plugin_Import.cpp.o	6a1e7ef34b220c83
+1294	2370	1731336790886835615	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QWbmpPlugin_Import.cpp.o	7b5a5cdc7e26bce9
+1279	2371	1731336790872144988	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QSvgPlugin_Import.cpp.o	d9b9bdd504481ac1
+1284	2390	1731336790877174072	CMakeFiles/2gtr_qt.dir/Users/thorsten/.vcpkg-clion/vcpkg/installed/arm64-osx/share/cmake/Qt5Gui/Qt5Gui_QTiffPlugin_Import.cpp.o	faa2c8112fe28266
+2390	2616	1731336791982845282	2gtr_qt	bd54856bbf1d49c3
