@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(2gtr_qt)
+project(test_qt)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
@@ -13,8 +13,8 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(2gtr_qt main.cpp)
-target_link_libraries(2gtr_qt
+add_executable(test_qt main.cpp)
+target_link_libraries(test_qt
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
