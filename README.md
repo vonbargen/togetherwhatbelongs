@@ -37,3 +37,6 @@ https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bas
 - cmake --preset=default
 - cmake --build build
 - /build/HelloWorld
+
+https://github.com/kaishin/markoff.git
+Ich möchte mit hilfe von commonMark markdown dateien parsen, anreichern und sie mit webkit in einer App ausgeben. Kann man so eine app schreiben?
