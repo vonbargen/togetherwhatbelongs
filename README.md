@@ -22,6 +22,14 @@ git remote add origin https://github.com/vonbargen/togetherwhatbelongs.git
 
 ## Build
 
+### Environment
+​	```sh
+export CMAKE_PATH=$HOME/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin
+export VCPKG_ROOT=$HOME/.vcpkg-clion/vcpkg
+export CMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake
+export PATH=$CMAKE_PATH:$VCPKG_ROOT:$PATH
+​	```
+
 https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash
 
 - rm -rf build
