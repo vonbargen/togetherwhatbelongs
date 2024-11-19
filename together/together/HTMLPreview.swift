@@ -9,7 +9,17 @@ import SwiftUI
 import WebKit
 
 struct HTMLPreview: NSViewRepresentable {
-    let htmlContent: String
+    var htmlContent = """
+    <html>
+    <head>
+        <style>body { font-family: -apple-system; }</style>
+    </head>
+    <body>
+        <h1>Test HTML</h1>
+        <p>Dies ist ein statischer Test der HTML-Vorschau.</p>
+    </body>
+    </html>
+"""
 
     func makeNSView(context: Context) -> WKWebView {
         let webView = WKWebView()
@@ -18,6 +28,7 @@ struct HTMLPreview: NSViewRepresentable {
 
     func updateNSView(_ nsView: WKWebView, context: Context) {
         print("Loading HTML into WebView") // Debug-Ausgabe
-        nsView.loadHTMLString(htmlContent, baseURL: nil)
+        
+        nsView.loadHTMLString(htmlContent, baseURL: URL(string: "about:blank"))
     }
 }
