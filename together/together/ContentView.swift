@@ -1,4 +1,5 @@
 import SwiftUI
+import Maaku
 
 struct ContentView: View {
     @Binding var document: togetherDocument
@@ -30,17 +31,29 @@ struct ContentView: View {
         }
     }
     
-    private func renderHTML(from markdown: String) -> String {
-        let html = """
-        <html>
-        <head><style>body { font-family: -apple-system; padding: 20px; }</style></head>
-        <body>
-        \(markdown)
-        </body>
-        </html>
-        """
-        print("Generated HTML: \(html)") // Debug-Ausgabe
+    public func renderHTML(from markdown: String) -> String {
+        do {
+            
+            let testmd = """
+    # Heading Linz
+    ## Heading 2
+    Simple paragraph
+    with two lines
+    
+    Another Paragraph
+    """
+            
+        // Erstelle ein Maaku-Dokument mit dem richtigen Argumentlabel
+            let document = try CMDocument(text: markdown,
+                                      options: .default,
+                                      extensions: .all)
+        let html = try document.renderHtml()
         return html
+            
+        } catch {
+            print("Fehler beim Rendern des mardowns: \(error)")
+            return "<html><body><p>Fehler beim Rendern des mardowns: \(error)</p></body></html>"
+        }
     }}
 
 #Preview {
