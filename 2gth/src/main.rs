@@ -17,7 +17,8 @@ fn main() {
     }
     "#;
 
-    println!("=== Input Code ===");
+    println!("=== Together what Belongs ===");
+    println!("===       Input Code      ===");
     println!("{}", input);
     println!();
 
