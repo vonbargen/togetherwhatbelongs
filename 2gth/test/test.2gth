@@ -1,0 +1,8 @@
+// Ein einfaches Beispiel
+let x = 42;
+/* Mehrzeiliger
+   Kommentar */
+let name = "Hallo Welt";
+fn test() {
+    return x + 1;
+}

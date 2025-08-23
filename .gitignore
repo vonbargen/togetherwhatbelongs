@@ -1,3 +1,4 @@
+# diff test
 # CLion specific
 .idea/
 cmake-build-*/
@@ -91,3 +92,32 @@ dkms.conf
 *.log
 *.tmp
 *.temp
+
+# build output
+/target/
+
+# cargo package outputs
+**/*.crate
+
+# backup & temp files
+**/*.swp
+**/*.swo
+**/*.tmp
+
+# node & NPM (falls benutzt)
+node_modules/
+
+# macOS system files
+.DS_Store
+
+# VSCode settings (optional)
+/.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# By Cargo.lock is needed for binaries, but for libraries kann man ihn ignorieren (optional für crates.io-Libraries)
+# Uncomment, wenn als Library veröffentlicht:
+/Cargo.lock
+
+together/together.xcodeproj
