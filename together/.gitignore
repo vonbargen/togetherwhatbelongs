@@ -1,0 +1,59 @@
+# Rust Build-Artefakte
+/target/
+**/*.rs.bk
+*.pdb
+
+# Cargo.lock sollte für Binaries committed werden, für Libraries nicht
+# Da dies ein Binary-Projekt zu sein scheint, belassen wir Cargo.lock
+
+# Debug-Symbole
+debug/
+
+# IDE-spezifische Dateien
+# IntelliJ / CLion / RustRover
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.directory
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+# Backup-Dateien
+*.bak
+*.swp
+*.swo
+
+# Profiling und Performance
+*.prof
+perf.data
+perf.data.old
+flamegraph.svg
+
+# Test-Coverage
+*.profraw
+*.profdata
+coverage/
+
+# Temporäre Dateien
+tmp/
+temp/
