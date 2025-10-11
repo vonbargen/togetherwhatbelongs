@@ -185,9 +185,13 @@ impl TypeChecker {
             }
         }
 
-        // Procedures
+        // Procedures - NICHT MEHR Built-ins überschreiben!
         for proc_decl in &decls.procedures {
-            self.check_procedure(proc_decl)?;
+            // Built-ins komplett überspringen - sie sind bereits registriert
+            let is_builtin = matches!(proc_decl.name.name.as_str(), "WriteInt" | "WriteLn");
+            if !is_builtin {
+                self.check_procedure(proc_decl)?;
+            }
         }
 
         Ok(())
