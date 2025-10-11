@@ -1,6 +1,11 @@
 [package]
 name = "together"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+inkwell = { version = "0.4", features = ["llvm16-0"], optional = true }
+
+[features]
+default = []
+llvm = ["inkwell"]

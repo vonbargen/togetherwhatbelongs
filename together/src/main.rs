@@ -7,6 +7,12 @@ use scanner::Lexer;
 use parser::{Parser, PrettyPrinter};
 use semantic::TypeChecker;
 use codegen::CGenerator;
+
+#[cfg(feature = "llvm")]
+use codegen::LLVMGenerator;
+#[cfg(feature = "llvm")]
+use inkwell::context::Context;
+
 use std::fs;
 
 fn main() {
@@ -43,9 +49,21 @@ fn main() {
         END
     END Init;
 
+    PROCEDURE WriteInt*(n: INTEGER);
+    BEGIN
+        (* Wird später implementiert *)
+    END WriteInt;
+
+    PROCEDURE WriteLn*;
+    BEGIN
+        (* Wird später implementiert *)
+    END WriteLn;
+
     BEGIN
         Init;
         count := Add(5, 10);
+        WriteInt(count);
+        WriteLn
     END Example.
     "#;
 
@@ -88,8 +106,6 @@ fn main() {
     match type_checker.check_module(&module) {
         Ok(()) => {
             println!("✓ Semantische Analyse erfolgreich!");
-            println!("  - Alle Typen korrekt");
-            println!("  - Alle Symbole definiert");
         }
         Err(errors) => {
             eprintln!("✗ Semantische Fehler gefunden:\n");
@@ -100,31 +116,70 @@ fn main() {
         }
     }
 
-    println!("\n=== CODE-GENERATOR ===\n");
+    // LLVM Backend (optional, nur wenn Feature aktiviert)
+    #[cfg(feature = "llvm")]
+    {
+        println!("\n=== LLVM CODE-GENERATOR ===\n");
 
-    let mut generator = CGenerator::new();
-    let c_code = generator.generate(&module);
+        let context = Context::create();
+        let mut llvm_gen = LLVMGenerator::new(&context, &module.name);
+
+        match llvm_gen.generate(&module) {
+            Ok(_llvm_ir) => {
+                println!("✓ LLVM-IR erfolgreich generiert!");
+
+                if let Err(e) = llvm_gen.write_to_file("output.ll") {
+                    eprintln!("✗ Fehler beim Schreiben: {}", e);
+                } else {
+                    println!("  - Ausgabe: output.ll\n");
+                }
+            }
+            Err(e) => {
+                eprintln!("✗ LLVM-Fehler: {}", e);
+            }
+        }
+    }
+
+    // C Backend (immer verfügbar)
+    println!("\n=== C CODE-GENERATOR ===\n");
+
+    let mut c_gen = CGenerator::new();
+    let c_code = c_gen.generate(&module);
 
     println!("✓ C-Code erfolgreich generiert!");
     println!("  - Ausgabe: output.c\n");
 
-    // C-Code in Datei schreiben
     if let Err(e) = fs::write("output.c", &c_code) {
         eprintln!("✗ Fehler beim Schreiben der Ausgabedatei: {}", e);
         return;
     }
 
-    println!("=== GENERIERTER C-CODE ===\n");
-    println!("{}", c_code);
-
-    println!("\n=== PRETTY PRINTER (Oberon) ===\n");
+    println!("=== PRETTY PRINTER (Oberon) ===\n");
 
     let mut printer = PrettyPrinter::new();
     let formatted_code = printer.print_module(&module);
     println!("{}", formatted_code);
 
     println!("\n=== KOMPILIERUNG ===\n");
-    println!("Um den generierten C-Code zu kompilieren:");
+
+    #[cfg(feature = "llvm")]
+    {
+        println!("LLVM (falls generiert):");
+        println!("  llc output.ll -o output.s");
+        println!("  gcc output.s -o output_llvm");
+        println!();
+    }
+
+    println!("C:");
     println!("  gcc -o output output.c");
     println!("  ./output");
+
+    #[cfg(not(feature = "llvm"))]
+    {
+        println!();
+        println!("💡 Hinweis: LLVM-Backend nicht aktiviert.");
+        println!("   Um LLVM zu nutzen:");
+        println!("   1. Installiere LLVM 16: brew install llvm@16  (macOS)");
+        println!("   2. Kompiliere mit: cargo run --features llvm");
+    }
 }

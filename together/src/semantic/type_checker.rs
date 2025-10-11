@@ -9,10 +9,43 @@ pub struct TypeChecker {
 
 impl TypeChecker {
     pub fn new() -> Self {
-        TypeChecker {
+        let mut checker = TypeChecker {
             symbol_table: SymbolTable::new(),
             errors: Vec::new(),
-        }
+        };
+        
+        // Built-in Prozeduren registrieren
+        checker.register_builtin_procedures();
+        
+        checker
+    }
+    
+    fn register_builtin_procedures(&mut self) {
+        // WriteLn: keine Parameter
+        self.symbol_table.define(Symbol {
+            name: "WriteLn".to_string(),
+            kind: SymbolKind::Procedure {
+                params: Vec::new(),
+                return_type: None,
+            },
+            exported: ExportMark::ReadOnly,
+            defined_at: None,
+        }).ok();
+        
+        // WriteInt: ein INTEGER-Parameter
+        self.symbol_table.define(Symbol {
+            name: "WriteInt".to_string(),
+            kind: SymbolKind::Procedure {
+                params: vec![Parameter {
+                    name: "n".to_string(),
+                    param_type: ResolvedType::Integer,
+                    is_var: false,
+                }],
+                return_type: None,
+            },
+            exported: ExportMark::ReadOnly,
+            defined_at: None,
+        }).ok();
     }
 
     pub fn check_module(&mut self, module: &Module) -> Result<(), Vec<String>> {
@@ -161,6 +194,14 @@ impl TypeChecker {
     }
 
     fn check_procedure(&mut self, proc: &ProcedureDeclaration) -> Result<(), Vec<String>> {
+        // Prüfen, ob bereits als Built-in registriert
+        let is_builtin = matches!(proc.name.name.as_str(), "WriteInt" | "WriteLn");
+
+        if is_builtin {
+            // Built-in-Funktionen: Body komplett überspringen, da sie im Code-Generator implementiert werden
+            return Ok(());
+        }
+
         let mut params = Vec::new();
         let mut return_type = None;
 
