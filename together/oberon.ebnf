@@ -1,0 +1,134 @@
+(* Lexikalische Struktur *)
+
+ident = letter {letter | digit}.
+integer = digit {digit} | digit {hexDigit} "H".
+real = digit {digit} "." {digit} [ScaleFactor].
+ScaleFactor = "E" ["+" | "-"] digit {digit}.
+number = integer | real.
+string = '"' {character} '"' | digit {hexDigit} "X".
+
+(* Module *)
+
+Module = MODULE ident ";" [ImportList] DeclSequence 
+         [BEGIN StatementSequence] END ident ".".
+
+ImportList = IMPORT Import {"," Import} ";".
+Import = ident [":=" ident].
+
+(* Deklarationen *)
+
+DeclSequence = {CONST {ConstDeclaration ";"} | 
+                TYPE {TypeDeclaration ";"} | 
+                VAR {VariableDeclaration ";"}} 
+                {ProcedureDeclaration ";" | ForwardDeclaration ";"}.
+
+ConstDeclaration = IdentDef "=" ConstExpression.
+TypeDeclaration = IdentDef "=" Type.
+VariableDeclaration = IdentList ":" Type.
+
+(* Typen *)
+
+Type = Qualident | 
+       ArrayType | 
+       RecordType | 
+       PointerType | 
+       ProcedureType.
+
+ArrayType = ARRAY length {"," length} OF Type.
+length = ConstExpression.
+
+RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
+BaseType = Qualident.
+FieldListSequence = FieldList {";" FieldList}.
+FieldList = IdentList ":" Type.
+
+PointerType = POINTER TO Type.
+
+ProcedureType = PROCEDURE [FormalParameters].
+
+FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" Qualident].
+FPSection = [VAR] ident {"," ident} ":" Type.
+
+(* Prozeduren *)
+
+ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+ProcedureHeading = PROCEDURE IdentDef [FormalParameters].
+ProcedureBody = DeclSequence [BEGIN StatementSequence] 
+                [RETURN Expression] END.
+
+ForwardDeclaration = PROCEDURE "^" IdentDef [FormalParameters].
+
+(* Statements *)
+
+StatementSequence = Statement {";" Statement}.
+
+Statement = [Assignment | 
+             ProcedureCall | 
+             IfStatement | 
+             CaseStatement | 
+             WhileStatement | 
+             RepeatStatement | 
+             ForStatement].
+
+Assignment = Designator ":=" Expression.
+
+ProcedureCall = Designator [ActualParameters].
+ActualParameters = "(" [ExpList] ")".
+
+IfStatement = IF Expression THEN StatementSequence 
+              {ELSIF Expression THEN StatementSequence} 
+              [ELSE StatementSequence] END.
+
+CaseStatement = CASE Expression OF Case {"|" Case} 
+                [ELSE StatementSequence] END.
+Case = [CaseLabelList ":" StatementSequence].
+CaseLabelList = CaseLabels {"," CaseLabels}.
+CaseLabels = ConstExpression [".." ConstExpression].
+
+WhileStatement = WHILE Expression DO StatementSequence 
+                 {ELSIF Expression DO StatementSequence} END.
+
+RepeatStatement = REPEAT StatementSequence UNTIL Expression.
+
+ForStatement = FOR ident ":=" Expression TO Expression 
+               [BY ConstExpression] DO StatementSequence END.
+
+(* Ausdrücke *)
+
+Expression = SimpleExpression [Relation SimpleExpression].
+Relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
+
+SimpleExpression = ["+" | "-"] Term {AddOperator Term}.
+AddOperator = "+" | "-" | OR.
+
+Term = Factor {MulOperator Factor}.
+MulOperator = "*" | "/" | DIV | MOD | "&".
+
+Factor = number | 
+         string | 
+         NIL | 
+         TRUE | 
+         FALSE | 
+         Set | 
+         Designator [ActualParameters] | 
+         "(" Expression ")" | 
+         "~" Factor.
+
+Set = "{" [Element {"," Element}] "}".
+Element = Expression [".." Expression].
+
+Designator = Qualident {Selector}.
+Selector = "." ident | 
+           "[" ExpList "]" | 
+           "^" | 
+           "(" Qualident ")".
+
+ExpList = Expression {"," Expression}.
+
+ConstExpression = Expression.
+
+(* Hilfsdefinitionen *)
+
+IdentDef = ident ["*" | "-"].
+Qualident = [ident "."] ident.
+IdentList = IdentDef {"," IdentDef}.

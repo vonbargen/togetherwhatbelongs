@@ -1,0 +1,5 @@
+ARRAY    BEGIN    BY       CASE     CONST    DIV      DO       ELSE
+ELSIF    END      FALSE    FOR      IF       IMPORT   IN       IS
+MOD      MODULE   NIL      OF       OR       POINTER  PROCEDURE RECORD
+REPEAT   RETURN   THEN     TO       TRUE     TYPE     UNTIL    VAR
+WHILE
