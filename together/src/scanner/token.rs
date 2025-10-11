@@ -50,7 +50,7 @@ pub enum TokenType {
     Slash,          // /
     Ampersand,      // &
     Tilde,          // ~
-    
+
     // Vergleichsoperatoren
     Equal,          // =
     NotEqual,       // #
@@ -79,7 +79,6 @@ pub enum TokenType {
 
     // Spezielle Token
     Eof,            // End of File
-    Comment,        // Kommentar (optional, wenn behalten)
 }
 
 #[derive(Debug, Clone, PartialEq)]
