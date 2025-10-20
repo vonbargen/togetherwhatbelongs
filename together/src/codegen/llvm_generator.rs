@@ -708,9 +708,10 @@ impl<'ctx> LLVMGenerator<'ctx> {
     // ========================================================================
 
     fn generate_write_int(&mut self) -> Result<(), String> {
-        let i64_type = self.context.i64_type();
-        let fn_type = self.context.void_type().fn_type(&[i64_type.into()], false);
-        let function = self.module.add_function("oberon_WriteInt", fn_type, None);
+        // Funktion aus Modul holen (wurde bereits in declare_function deklariert)
+        let function = self.module
+            .get_function("oberon_WriteInt")
+            .ok_or("WriteInt nicht deklariert")?;
 
         let entry = self.context.append_basic_block(function, "entry");
         self.builder.position_at_end(entry);
@@ -731,8 +732,10 @@ impl<'ctx> LLVMGenerator<'ctx> {
     }
 
     fn generate_write_ln(&mut self) -> Result<(), String> {
-        let fn_type = self.context.void_type().fn_type(&[], false);
-        let function = self.module.add_function("oberon_WriteLn", fn_type, None);
+        // Funktion aus Modul holen (wurde bereits in declare_function deklariert)
+        let function = self.module
+            .get_function("oberon_WriteLn")
+            .ok_or("WriteLn nicht deklariert")?;
 
         let entry = self.context.append_basic_block(function, "entry");
         self.builder.position_at_end(entry);

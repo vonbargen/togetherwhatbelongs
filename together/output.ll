@@ -3,6 +3,12 @@ source_filename = "Example"
 
 @oberon_count = global i64 0
 @oberon_points = global [10 x { double, double }] zeroinitializer
+@.str = private constant [5 x i8] c"%lld\00"
+@.str.1 = private constant [1 x i8] zeroinitializer
+
+declare i32 @printf(ptr, ...)
+
+declare i32 @puts(ptr)
 
 define i64 @oberon_Add(i64 %0, i64 %1) {
 entry:
@@ -49,10 +55,25 @@ forcont:                                          ; preds = %forcond
   ret void
 }
 
+define void @oberon_WriteInt(i64 %0) {
+entry:
+  %printf_call = call i32 (ptr, ...) @printf(ptr @.str, i64 %0)
+  ret void
+}
+
+define void @oberon_WriteLn() {
+entry:
+  %puts_call = call i32 @puts(ptr @.str.1)
+  ret void
+}
+
 define i32 @main() {
 entry:
   call void @oberon_Init()
-  %call = call i64 @oberon_Add(i64 5, i64 10)
+  %call = call i64 @oberon_Add(i64 5, i64 37)
   store i64 %call, ptr @oberon_count, align 4
+  %load = load i64, ptr @oberon_count, align 4
+  call void @oberon_WriteInt(i64 %load)
+  call void @oberon_WriteLn()
   ret i32 0
 }

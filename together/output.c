@@ -7,6 +7,8 @@
 // Forward declarations
 int64_t oberon_Add(int64_t oberon_a, int64_t oberon_b);
 void oberon_Init(void);
+void oberon_WriteInt(int64_t oberon_n);
+void oberon_WriteLn(void);
 
 // Constants
 #define oberon_MaxSize 100LL
@@ -37,8 +39,16 @@ void oberon_Init(void) {
     }
 }
 
+void oberon_WriteInt(int64_t oberon_n) {
+}
+
+void oberon_WriteLn(void) {
+}
+
 int main(void) {
     oberon_Init();
-    oberon_count = oberon_Add(5LL, 10LL);
+    oberon_count = oberon_Add(5LL, 37LL);
+    oberon_WriteInt(oberon_count);
+    oberon_WriteLn();
     return 0;
 }

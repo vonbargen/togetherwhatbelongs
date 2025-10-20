@@ -61,7 +61,7 @@ fn main() {
 
     BEGIN
         Init;
-        count := Add(5, 10);
+        count := Add(5, 37);
         WriteInt(count);
         WriteLn
     END Example.

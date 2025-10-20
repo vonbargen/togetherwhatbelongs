@@ -48,6 +48,48 @@ LBB1_3:                                 ; %forcont
 	.loh AdrpAdrp	Lloh0, Lloh1
 	.cfi_endproc
                                         ; -- End function
+	.globl	_oberon_WriteInt                ; -- Begin function oberon_WriteInt
+	.p2align	2
+_oberon_WriteInt:                       ; @oberon_WriteInt
+	.cfi_startproc
+; %bb.0:                                ; %entry
+	sub	sp, sp, #32
+	.cfi_def_cfa_offset 32
+	stp	x29, x30, [sp, #16]             ; 16-byte Folded Spill
+	.cfi_offset w30, -8
+	.cfi_offset w29, -16
+	mov	x8, x0
+Lloh3:
+	adrp	x0, l_.str@PAGE
+Lloh4:
+	add	x0, x0, l_.str@PAGEOFF
+	str	x8, [sp]
+	bl	_printf
+	ldp	x29, x30, [sp, #16]             ; 16-byte Folded Reload
+	add	sp, sp, #32
+	ret
+	.loh AdrpAdd	Lloh3, Lloh4
+	.cfi_endproc
+                                        ; -- End function
+	.globl	_oberon_WriteLn                 ; -- Begin function oberon_WriteLn
+	.p2align	2
+_oberon_WriteLn:                        ; @oberon_WriteLn
+	.cfi_startproc
+; %bb.0:                                ; %entry
+	stp	x29, x30, [sp, #-16]!           ; 16-byte Folded Spill
+	.cfi_def_cfa_offset 16
+	.cfi_offset w30, -8
+	.cfi_offset w29, -16
+Lloh5:
+	adrp	x0, l_.str.1@PAGE
+Lloh6:
+	add	x0, x0, l_.str.1@PAGEOFF
+	bl	_puts
+	ldp	x29, x30, [sp], #16             ; 16-byte Folded Reload
+	ret
+	.loh AdrpAdd	Lloh5, Lloh6
+	.cfi_endproc
+                                        ; -- End function
 	.globl	_main                           ; -- Begin function main
 	.p2align	2
 _main:                                  ; @main
@@ -59,12 +101,13 @@ _main:                                  ; @main
 	.cfi_offset w29, -16
 	bl	_oberon_Init
 	mov	w0, #5
-	mov	w1, #10
+	mov	w1, #37
 	bl	_oberon_Add
-	mov	x8, x0
-	adrp	x9, _oberon_count@PAGE
+	adrp	x8, _oberon_count@PAGE
+	str	x0, [x8, _oberon_count@PAGEOFF]
+	bl	_oberon_WriteInt
+	bl	_oberon_WriteLn
 	mov	w0, wzr
-	str	x8, [x9, _oberon_count@PAGEOFF]
 	ldp	x29, x30, [sp], #16             ; 16-byte Folded Reload
 	ret
 	.cfi_endproc
@@ -73,4 +116,11 @@ _main:                                  ; @main
 .zerofill __DATA,__common,_oberon_count,8,3
 	.globl	_oberon_points                  ; @oberon_points
 .zerofill __DATA,__common,_oberon_points,160,4
+	.section	__TEXT,__const
+l_.str:                                 ; @.str
+	.asciz	"%lld"
+
+l_.str.1:                               ; @.str.1
+	.space	1
+
 .subsections_via_symbols

@@ -881,27 +881,7 @@ impl Parser {
                     self.advance();
                     selectors.push(Selector::Dereference);
                 }
-                TokenType::LParen if !selectors.is_empty() || matches!(self.peek_ahead(1), Some(Token { token_type: TokenType::Identifier(_), .. })) => {
-                    // Type guard nur wenn wir bereits Selektoren haben oder wenn es eindeutig ein Qualident ist
-                    // Ansonsten könnte es ein Funktionsaufruf sein
-                    let saved_pos = self.current;
-                    self.advance();
-
-                    // Versuche als TypeGuard zu parsen
-                    if matches!(self.peek().token_type, TokenType::Identifier(_)) {
-                        if let Ok(type_guard) = self.parse_qualident() {
-                            if self.check(&TokenType::RParen) {
-                                self.expect(TokenType::RParen)?;
-                                selectors.push(Selector::TypeGuard(type_guard));
-                                continue;
-                            }
-                        }
-                    }
-
-                    // Kein TypeGuard, zurückspulen
-                    self.current = saved_pos;
-                    break;
-                }
+                // TypeGuard entfernt - wird später bei Bedarf hinzugefügt
                 _ => break,
             }
         }

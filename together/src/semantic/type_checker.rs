@@ -9,43 +9,10 @@ pub struct TypeChecker {
 
 impl TypeChecker {
     pub fn new() -> Self {
-        let mut checker = TypeChecker {
+        TypeChecker {
             symbol_table: SymbolTable::new(),
             errors: Vec::new(),
-        };
-        
-        // Built-in Prozeduren registrieren
-        checker.register_builtin_procedures();
-        
-        checker
-    }
-    
-    fn register_builtin_procedures(&mut self) {
-        // WriteLn: keine Parameter
-        self.symbol_table.define(Symbol {
-            name: "WriteLn".to_string(),
-            kind: SymbolKind::Procedure {
-                params: Vec::new(),
-                return_type: None,
-            },
-            exported: ExportMark::ReadOnly,
-            defined_at: None,
-        }).ok();
-        
-        // WriteInt: ein INTEGER-Parameter
-        self.symbol_table.define(Symbol {
-            name: "WriteInt".to_string(),
-            kind: SymbolKind::Procedure {
-                params: vec![Parameter {
-                    name: "n".to_string(),
-                    param_type: ResolvedType::Integer,
-                    is_var: false,
-                }],
-                return_type: None,
-            },
-            exported: ExportMark::ReadOnly,
-            defined_at: None,
-        }).ok();
+        }
     }
 
     pub fn check_module(&mut self, module: &Module) -> Result<(), Vec<String>> {
@@ -185,27 +152,44 @@ impl TypeChecker {
             }
         }
 
-        // Procedures - NICHT MEHR Built-ins überschreiben!
+        // Procedures - alle normal verarbeiten
         for proc_decl in &decls.procedures {
-            // Built-ins komplett überspringen - sie sind bereits registriert
-            let is_builtin = matches!(proc_decl.name.name.as_str(), "WriteInt" | "WriteLn");
-            if !is_builtin {
-                self.check_procedure(proc_decl)?;
-            }
+            self.check_procedure(proc_decl)?;
         }
 
         Ok(())
     }
 
     fn check_procedure(&mut self, proc: &ProcedureDeclaration) -> Result<(), Vec<String>> {
-        // Prüfen, ob bereits als Built-in registriert
-        let is_builtin = matches!(proc.name.name.as_str(), "WriteInt" | "WriteLn");
+        let (params, return_type) = self.parse_procedure_parameters(proc)?;
+        self.register_procedure_symbol(proc, &params, &return_type)?;
 
-        if is_builtin {
-            // Built-in-Funktionen: Body komplett überspringen, da sie im Code-Generator implementiert werden
+        if proc.is_forward {
             return Ok(());
         }
 
+        self.setup_procedure_scope(&proc.name.name, &params)?;
+        self.check_declarations(&proc.declarations)?;
+
+        // Built-in Funktionen können leere Bodies haben
+        if let Some(body) = &proc.body {
+            if !body.is_empty() {
+                self.check_statement_sequence(body)?;
+            }
+        }
+
+        self.validate_procedure_return(proc, &return_type)?;
+
+        self.symbol_table.set_current_procedure(None);
+        self.symbol_table.exit_scope();
+
+        Ok(())
+    }
+
+    fn parse_procedure_parameters(
+        &mut self,
+        proc: &ProcedureDeclaration,
+    ) -> Result<(Vec<Parameter>, Option<ResolvedType>), Vec<String>> {
         let mut params = Vec::new();
         let mut return_type = None;
 
@@ -226,55 +210,66 @@ impl TypeChecker {
             }
         }
 
-        // Prozedur-Symbol definieren
-        self.symbol_table.define(Symbol {
-            name: proc.name.name.clone(),
-            kind: SymbolKind::Procedure {
-                params: params.clone(),
-                return_type: return_type.clone(),
-            },
-            exported: proc.name.exported.clone(),
-            defined_at: None,
-        }).map_err(|e| {
-            self.errors.push(e.clone());
-            vec![e]
-        })?;
+        Ok((params, return_type))
+    }
 
-        if proc.is_forward {
-            return Ok(());
-        }
-
-        // Neuer Scope für Prozedur-Body
-        self.symbol_table.enter_scope();
-        self.symbol_table.set_current_procedure(Some(proc.name.name.clone()));
-
-        // Parameter als lokale Variablen hinzufügen
-        for param in &params {
-            self.symbol_table.define(Symbol {
-                name: param.name.clone(),
-                kind: SymbolKind::Variable {
-                    var_type: param.param_type.clone(),
-                    is_parameter: true,
-                    is_var_param: param.is_var,
+    fn register_procedure_symbol(
+        &mut self,
+        proc: &ProcedureDeclaration,
+        params: &[Parameter],
+        return_type: &Option<ResolvedType>,
+    ) -> Result<(), Vec<String>> {
+        self.symbol_table
+            .define(Symbol {
+                name: proc.name.name.clone(),
+                kind: SymbolKind::Procedure {
+                    params: params.to_vec(),
+                    return_type: return_type.clone(),
                 },
-                exported: ExportMark::None,
+                exported: proc.name.exported.clone(),
                 defined_at: None,
-            }).ok();
+            })
+            .map_err(|e| {
+                self.errors.push(e.clone());
+                vec![e]
+            })
+    }
+
+    fn setup_procedure_scope(
+        &mut self,
+        proc_name: &str,
+        params: &[Parameter],
+    ) -> Result<(), Vec<String>> {
+        self.symbol_table.enter_scope();
+        self.symbol_table.set_current_procedure(Some(proc_name.to_string()));
+
+        for param in params {
+            self.symbol_table
+                .define(Symbol {
+                    name: param.name.clone(),
+                    kind: SymbolKind::Variable {
+                        var_type: param.param_type.clone(),
+                        is_parameter: true,
+                        is_var_param: param.is_var,
+                    },
+                    exported: ExportMark::None,
+                    defined_at: None,
+                })
+                .ok();
         }
 
-        // Lokale Deklarationen prüfen
-        self.check_declarations(&proc.declarations)?;
+        Ok(())
+    }
 
-        // Body prüfen
-        if let Some(body) = &proc.body {
-            self.check_statement_sequence(body)?;
-        }
-
-        // Return-Ausdruck prüfen
+    fn validate_procedure_return(
+        &mut self,
+        proc: &ProcedureDeclaration,
+        return_type: &Option<ResolvedType>,
+    ) -> Result<(), Vec<String>> {
         if let Some(ret_expr) = &proc.return_expr {
             let expr_type = self.infer_expression_type(ret_expr)?;
 
-            if let Some(expected_type) = &return_type {
+            if let Some(expected_type) = return_type {
                 if !expr_type.is_assignable_to(expected_type) {
                     let err = format!(
                         "RETURN-Typ {:?} passt nicht zu deklariertem Typ {:?} in Prozedur '{}'",
@@ -299,9 +294,6 @@ impl TypeChecker {
             self.errors.push(err.clone());
             return Err(vec![err]);
         }
-
-        self.symbol_table.set_current_procedure(None);
-        self.symbol_table.exit_scope();
 
         Ok(())
     }
@@ -411,7 +403,7 @@ impl TypeChecker {
     }
 
     // ========================================================================
-    // Statements (unchanged, keeping existing implementation)
+    // Statements
     // ========================================================================
 
     fn check_statement_sequence(&mut self, statements: &[Statement]) -> Result<(), Vec<String>> {
@@ -444,7 +436,8 @@ impl TypeChecker {
                 if let ResolvedType::Procedure { params, .. } = proc_type {
                     if arguments.len() != params.len() {
                         let err = format!(
-                            "Falsche Anzahl an Argumenten: erwartet {}, gefunden {}",
+                            "Falsche Anzahl an Argumenten für '{}': erwartet {}, gefunden {}",
+                            designator.base.name,  // NEU: Prozedurname hinzufügen
                             params.len(),
                             arguments.len()
                         );

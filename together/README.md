@@ -34,3 +34,11 @@ Vorteile dieser Methode
 Du kannst also direkt mit LLVM-Bibliotheken arbeiten, sowohl für Ahead-of-Time-Kompilierung (AOT) als auch für Just-In-Time-Execution (JIT), und alles in einer eigenen Benutzeroberfläche kapseln, genauso wie das bei modernen Editor- und IDE-Projekten üblich ist. Externe Tools wie clang oder llc sind nur Alternativen, aber keine Pflicht.Ja, das geht problemlos: Mit der LLVM-API kannst du sämtliche LLVM-Funktionen direkt aus deiner Entwicklungsumgebung heraus nutzen, ohne dass der Nutzer explizit llc oder clang aufrufen muss. Die LLVM-Bibliotheken erlauben das Erstellen, Optimieren und Kompilieren von IR bis hin zu Maschinencode programmatisch – also komplett im Hintergrund deiner Anwendung, sei es JIT (Just-In-Time) oder als AOT (Ahead-of-Time) Compilation.
 Viele Beispiele, wie das berühmte “Kaleidoscope”-Tutorial im LLVM-Projekt, und auch andere Sprachen bauen eigene Compiler mit direkter Nutzung der LLVM-Bibliotheken und ohne externe Tools zu benötigen. Das Ganze läuft dann genauso wie in größeren IDEs: Der Anwender bekommt davon nichts mit, da alle Übersetzungsschritte unter der Haube mit der API ausgeführt werden.
 Zusammengefasst: Externe Tools wie clang oder llc sind optional – alle Schritte können mit der API innerhalb deiner eigenen Anwendung automatisiert werden, sowohl unter Linux als auch im Docker-Container.
+
+# Zusammenfassung
+```sh
+cargo run --features llvm
+$(brew --prefix llvm@16)/bin/llc output.ll -o output.s
+$(brew --prefix llvm@16)/bin/clang output.s -o output_llvm
+./output_llvm
+```

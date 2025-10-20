@@ -55,14 +55,17 @@ pub enum ResolvedType {
         return_type: Option<Box<ResolvedType>>,
     },
     Named(String),
-    Unresolved,
+    // TvB Unresolved,
 }
 
 #[derive(Debug, Clone)]
 pub struct Symbol {
     pub name: String,
     pub kind: SymbolKind,
+
+    #[allow(dead_code)]
     pub exported: ExportMark,
+    #[allow(dead_code)]
     pub defined_at: Option<(usize, usize)>, // line, column
 }
 
@@ -159,6 +162,7 @@ impl SymbolTable {
         None
     }
 
+    #[allow(dead_code)]
     pub fn lookup_in_current_scope(&self, name: &str) -> Option<&Symbol> {
         self.scopes.last().and_then(|scope| scope.get(name))
     }
@@ -167,6 +171,7 @@ impl SymbolTable {
         self.current_procedure = name;
     }
 
+    #[allow(dead_code)]
     pub fn get_current_procedure(&self) -> Option<&String> {
         self.current_procedure.as_ref()
     }
