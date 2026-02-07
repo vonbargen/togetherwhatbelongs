@@ -24,6 +24,7 @@ typedef struct {
 
 // Global variables
 int64_t oberon_count;
+int64_t oberon_offset;
 oberon_Point oberon_points[10];
 
 int64_t oberon_Add(int64_t oberon_a, int64_t oberon_b) {
@@ -48,7 +49,9 @@ void oberon_WriteLn(void) {
 int main(void) {
     oberon_Init();
     oberon_count = oberon_Add(5LL, 37LL);
-    oberon_WriteInt(oberon_count);
-    oberon_WriteLn();
+    for (oberon_offset = 0LL; oberon_offset <= 9LL; oberon_offset += 1) {
+        oberon_WriteInt((oberon_count + oberon_offset));
+        oberon_WriteLn();
+    }
     return 0;
 }

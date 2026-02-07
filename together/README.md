@@ -12,6 +12,10 @@ brew --prefix llvm@16
 $(brew --prefix llvm@16)/bin/llc output.ll -o output.s
 $(brew --prefix llvm@16)/bin/clang output.s -o output_llvm
 
+```java
+WritelLN('6*7')
+```
+
 # Oder füge LLVM zum PATH hinzu:
 export PATH="$(brew --prefix llvm@16)/bin:$PATH"
 llc output.ll -o output.s
@@ -21,7 +25,7 @@ clang output.s -o output_llvm
 ./output_llvm
 
 # Scriptsprache
-Ich möchte eine Art Scriptsprache mit LLVM implementieren in einer einfachen Entwicklungumgebung. Dort möchte ich nicht das Anwender llc oder clang aufrufen müssen. Geht das auch unter der Haube?
+Ich möchte eine Art Scriptsprache mit LLVM implementieren in einer einfachen Entwicklungsumgebung. Dort möchte ich nicht, dass Anwender llc oder clang aufrufen müssen. Geht das auch unter der Haube?
 
 Ja, es ist möglich, eine eigene Skriptsprache mit LLVM zu implementieren, ohne dass der Anwender explizit llc oder clang über die Kommandozeile aufrufen muss. LLVM ist modular aufgebaut und stellt nicht nur Kommandozeilen-Tools, sondern vor allem umfangreiche Programmierschnittstellen (APIs) bereit – in C, C++, und vielen Sprachen durch Bindings.
 Vorgehensweise in einer IDE-ähnlichen Umgebung

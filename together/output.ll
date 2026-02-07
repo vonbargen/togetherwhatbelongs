@@ -2,6 +2,7 @@
 source_filename = "Example"
 
 @oberon_count = global i64 0
+@oberon_offset = global i64 0
 @oberon_points = global [10 x { double, double }] zeroinitializer
 @.str = private constant [5 x i8] c"%lld\00"
 @.str.1 = private constant [1 x i8] zeroinitializer
@@ -70,10 +71,13 @@ entry:
 define i32 @main() {
 entry:
   call void @oberon_Init()
+  store i64 100, ptr @oberon_offset, align 4
   %call = call i64 @oberon_Add(i64 5, i64 37)
   store i64 %call, ptr @oberon_count, align 4
   %load = load i64, ptr @oberon_count, align 4
-  call void @oberon_WriteInt(i64 %load)
+  %load1 = load i64, ptr @oberon_offset, align 4
+  %add = add i64 %load, %load1
+  call void @oberon_WriteInt(i64 %add)
   call void @oberon_WriteLn()
   ret i32 0
 }

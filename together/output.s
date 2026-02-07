@@ -95,25 +95,37 @@ Lloh6:
 _main:                                  ; @main
 	.cfi_startproc
 ; %bb.0:                                ; %entry
-	stp	x29, x30, [sp, #-16]!           ; 16-byte Folded Spill
-	.cfi_def_cfa_offset 16
+	stp	x20, x19, [sp, #-32]!           ; 16-byte Folded Spill
+	.cfi_def_cfa_offset 32
+	stp	x29, x30, [sp, #16]             ; 16-byte Folded Spill
 	.cfi_offset w30, -8
 	.cfi_offset w29, -16
+	.cfi_offset w19, -24
+	.cfi_offset w20, -32
 	bl	_oberon_Init
+	adrp	x19, _oberon_offset@PAGE
+	mov	w8, #100
 	mov	w0, #5
 	mov	w1, #37
+	str	x8, [x19, _oberon_offset@PAGEOFF]
 	bl	_oberon_Add
-	adrp	x8, _oberon_count@PAGE
-	str	x0, [x8, _oberon_count@PAGEOFF]
+	ldr	x8, [x19, _oberon_offset@PAGEOFF]
+	adrp	x9, _oberon_count@PAGE
+	add	x8, x0, x8
+	str	x0, [x9, _oberon_count@PAGEOFF]
+	mov	x0, x8
 	bl	_oberon_WriteInt
 	bl	_oberon_WriteLn
+	ldp	x29, x30, [sp, #16]             ; 16-byte Folded Reload
 	mov	w0, wzr
-	ldp	x29, x30, [sp], #16             ; 16-byte Folded Reload
+	ldp	x20, x19, [sp], #32             ; 16-byte Folded Reload
 	ret
 	.cfi_endproc
                                         ; -- End function
 	.globl	_oberon_count                   ; @oberon_count
 .zerofill __DATA,__common,_oberon_count,8,3
+	.globl	_oberon_offset                  ; @oberon_offset
+.zerofill __DATA,__common,_oberon_offset,8,3
 	.globl	_oberon_points                  ; @oberon_points
 .zerofill __DATA,__common,_oberon_points,160,4
 	.section	__TEXT,__const
